@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My List App</title>
+    <style>
+        body{background-color: rgb(0, 137, 216); width: 478px;}
+        .cont
+        {
+            display: block;
+            width: 250px;
+            background-color: rgb(136, 193, 234);
+            height: 750px;
+            color: white;
+            overflow: hidden;
+        }
+        button{background-color: rgb(118, 152, 237); border: none; border-radius: 20px; color: white; cursor: pointer;}
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        li span {
+            margin-right: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="cont">
+        <h1>Lucky Persons</h1>
+        <input type="text" onkeypress="ent(event)" id="itemInput" placeholder="Enter a person">
+        <button id="addItemBtn">Add</button>
+        <ul id="itemList"></ul>
+        <button id="randomItemBtn">Choose the lucky person</button>
+        <p id="randomItemDisplay"></p>   
+    </div>
+
+    <div class="welc">
+        <button>Create a game</button> <br> <br>
+        <button>Join in a game</button>
+        <input type="text" name="" id="pin">
+        <button onclick="code()">ok</button>
+    </div>
+    
+
+    <script>
+        // Get elements from the DOM
+        const itemInput = document.getElementById('itemInput');
+        const addItemBtn = document.getElementById('addItemBtn');
+        const itemList = document.getElementById('itemList');
+        const randomItemBtn = document.getElementById('randomItemBtn');
+        const randomItemDisplay = document.getElementById('randomItemDisplay');
+
+        // Load items from local storage
+        const items = JSON.parse(localStorage.getItem('items')) || [];
+
+        // Function to render items in the list
+        const renderItems = () => {
+            itemList.innerHTML = '';
+            items.forEach((item, index) => {
+                const li = document.createElement('li');
+                const span = document.createElement('span');
+                const deleteBtn = document.createElement('button');
+                li.textContent = item;
+                
+                deleteBtn.textContent = 'Delete';
+                deleteBtn.addEventListener('click', () => {
+                    items.splice(index, 1);
+                    localStorage.setItem('items', JSON.stringify(items));
+                    renderItems();
+                });
+                li.appendChild(span);
+                li.appendChild(deleteBtn);
+                itemList.appendChild(li);
+            });
+        };
+
+        // Add item to the list
+        addItemBtn.addEventListener('click', () => {
+            const newItem = itemInput.value.trim();
+            if (newItem !== '') {
+                if (newItem.length < 20)
+                {
+                items.push(newItem);
+                localStorage.setItem('items', JSON.stringify(items));
+                renderItems();
+                itemInput.value = '';
+                }
+            }
+        });
+
+        function ent(event) 
+        {
+            if (event.keyCode === 13) { // Check if the pressed key is Enter (key code 13)
+                const newItem = itemInput.value.trim();
+                if (newItem !== '') 
+                {
+                    if (newItem.length < 20)
+                    {
+                    items.push(newItem);
+                    localStorage.setItem('items', JSON.stringify(items));
+                    renderItems();
+                    itemInput.value = '';
+                    }
+                } 
+            }
+        }
+
+        // Display a random item
+        randomItemBtn.addEventListener('click', () => {
+            if (items.length > 0) {
+                const randomIndex = Math.floor(Math.random() * items.length);
+                randomItemDisplay.textContent = `Lucky person: ${items[randomIndex]}`;
+            } else {
+                randomItemDisplay.textContent = 'No items in the list';
+            }
+        });
+
+        // Render initial items
+        renderItems();
+
+        function code()
+        {
+            var inputVal = document.getElementById("pin").value;
+
+            // Send the data to the cloud HTML file
+            window.location.href = "" + encodeURIComponent(inputVal);
+        }
+        
+    </script>
+</body>
+</html>
